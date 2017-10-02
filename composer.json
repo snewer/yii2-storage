@@ -1,0 +1,17 @@
+{
+    "name": "snewer/yii2-storage",
+    "authors": [
+        {
+            "name": "Kirill Kasyanov",
+            "email": "snewer0@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2-httpclient": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "snewer\\storage\\": ""
+        }
+    }
+}
