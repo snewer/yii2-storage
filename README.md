@@ -1,4 +1,3 @@
-
 <p align="center">
     <h1 align="center">Storage компонент для Yii2</h1>
 </p>
