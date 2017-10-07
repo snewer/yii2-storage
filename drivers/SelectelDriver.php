@@ -4,13 +4,12 @@ namespace snewer\storage\drivers;
 
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Component;
 use yii\httpclient\Client;
 use yii\web\HttpException;
 use yii\web\ForbiddenHttpException;
-use snewer\storage\StorageInterface;
+use snewer\storage\AbstractStorage;
 
-class SelectelDriver extends Component implements StorageInterface
+class SelectelDriver extends AbstractStorage
 {
 
     public $user;

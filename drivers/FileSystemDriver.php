@@ -4,42 +4,71 @@ namespace snewer\storage\drivers;
 
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Component;
 use yii\helpers\Url;
-use snewer\storage\StorageInterface;
+use snewer\storage\AbstractStorage;
 
-class FileSystemDriver extends Component implements StorageInterface
+class FileSystemDriver extends AbstractStorage
 {
 
-    // путь дирректории для загрузок
-    public $uploadPath;
-    // URL до директории для загрузок
-    public $uploadUrl;
+    /**
+     * Путь до папки, в которую будут загружены файлы.
+     * @var string
+     */
+    public $basePath;
+
+    /**
+     * URL до папки, в которую загружаются файлы.
+     * @var string
+     */
+    public $baseUrl;
+
+    /**
+     * Уровень вложенности, относительно self::$basePath
+     * @var int
+     */
     public $depth = 3;
 
+    /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
     public function init()
     {
-        if (!isset($this->uploadPath, $this->uploadUrl)) {
-            throw new InvalidConfigException;
+        if (!isset($this->basePath)) {
+            throw new InvalidConfigException('Необходимо указать свойство basePath.');
         }
     }
 
+    /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
     public function getUrl($path)
     {
-        return Url::to(Yii::getAlias(rtrim($this->uploadUrl, '/')) . $path, true);
+        if (isset($this->baseUrl)) {
+            return Url::to(Yii::getAlias(rtrim($this->baseUrl, '/')) . $path, true);
+        } else {
+            throw new InvalidConfigException('Необходимо указать свойство baseUrl.');
+        }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getSource($path)
     {
-        $uploadPath = Yii::getAlias(rtrim($this->uploadPath, '/'));
+        $basePath = Yii::getAlias(rtrim($this->basePath, '/'));
         $path = ltrim($path, '/');
-        return file_get_contents("$uploadPath/$path");
+        return file_get_contents("$basePath/$path");
     }
 
+    /**
+     * @inheritdoc
+     */
     public function upload($source, $extension)
     {
-        $uploadPath = Yii::getAlias($this->uploadPath);
-        $uploadPath = rtrim($uploadPath, '/');
+        $basePath = Yii::getAlias($this->basePath);
+        $basePath = rtrim($basePath, '/');
         do {
             $path = '';
             // используем древовидную структуру директорий,
@@ -49,18 +78,21 @@ class FileSystemDriver extends Component implements StorageInterface
                 // AdBlocker блокирует пути, в которых встречаются некоторые ключевые слова, такие как "ad", "adv"
                 // поэтому убираем их из пути.
                 $path = str_replace('ad', 'ww', $path);
-                if (!is_dir($uploadPath . $path)) {
-                    mkdir($uploadPath . $path);
+                if (!is_dir($basePath . $path)) {
+                    mkdir($basePath . $path);
                 }
             }
             $path .= '/' . uniqid() . '.' . strtolower($extension);
-        } while (is_file($uploadPath . $path));
-        return file_put_contents($uploadPath . $path, $source) ? $path : false;
+        } while (is_file($basePath . $path));
+        return file_put_contents($basePath . $path, $source) ? $path : false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function delete($path)
     {
-        $filePath = Yii::getAlias(rtrim($this->uploadUrl, '/')) . $path;
+        $filePath = Yii::getAlias(rtrim($this->baseUrl, '/')) . $path;
         return unlink($filePath);
     }
 

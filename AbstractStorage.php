@@ -2,8 +2,22 @@
 
 namespace snewer\storage;
 
-interface StorageInterface
+use yii\base\Object;
+
+abstract class AbstractStorage extends Object
 {
+
+    /**
+     * Идентификатор хранилища.
+     * @var int
+     */
+    public $id;
+
+    /**
+     * Название хранилища.
+     * @var string
+     */
+    public $name;
 
     /**
      * Записывает содержимое переменной $binary в файл хранилища с расширением $extension
@@ -12,22 +26,22 @@ interface StorageInterface
      * @param $extension
      * @return string|boolean - возвращает путь к файлу относительно хранилища
      */
-    public function upload($binary, $extension);
+    abstract public function upload($binary, $extension);
 
     /**
      * Возвращает веб-доступный путь к файлу хранилища
      *
      * @param $path - путь к файлу в хранилище, на основании которого можно однозначно определить файл
-     * @return string
+     * @return string|bool
      */
-    public function getUrl($path);
+    abstract public function getUrl($path);
 
     /**
      * Возвращает содержимое файла.
      * @param $path - путь к файлу в хранилище
-     * @return string
+     * @return string|bool
      */
-    public function getSource($path);
+    abstract public function getSource($path);
 
     /**
      * Удаляет файл из хранилища
@@ -35,6 +49,6 @@ interface StorageInterface
      * @param $path
      * @return boolean
      */
-    public function delete($path);
+    abstract public function delete($path);
 
 }
