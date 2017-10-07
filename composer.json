@@ -1,5 +1,7 @@
 {
     "name": "snewer/yii2-storage",
+    "license": "BSD-3-Clause",
+    "keywords": ["yii2", "storage"],
     "authors": [
         {
             "name": "Kirill Kasyanov",
@@ -7,6 +9,7 @@
         }
     ],
     "require": {
+        "yiisoft/yii2": "*",
         "yiisoft/yii2-httpclient": "^2.0"
     },
     "autoload": {
