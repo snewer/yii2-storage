@@ -8,6 +8,7 @@
             "email": "snewer0@gmail.com"
         }
     ],
+    "type": "yii2-extension",
     "require": {
         "yiisoft/yii2": "*"
     },
