@@ -9,12 +9,11 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "*",
-        "yiisoft/yii2-httpclient": "^2.0"
+        "yiisoft/yii2": "*"
     },
     "autoload": {
         "psr-4": {
-            "snewer\\storage\\": ""
+            "snewer\\storage\\": "src/"
         }
     }
 }

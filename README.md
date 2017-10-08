@@ -43,7 +43,8 @@ snewer\storage\AbstractStorage
 ```php
 snewer\storage\drivers\FileSystemDriver
 ```
-которое имеет следующие свойства:
+который имеет следующие свойства:
+
 <table>
         <tr>
             <th>Свойство</th>
