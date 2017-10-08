@@ -103,3 +103,69 @@ snewer\storage\drivers\FileSystemDriver
 
 Использование
 -------------
+После настройки компонента использовать хранилище
+можно как через методы компонента, так и обращаясь
+непосредственно к объекту хранилища.
+
+**Пример** реализации методов загрузки изображения
+и получения URL ссылки на него в модели
+изображения вашего проекта `app\models\Image`:
+```php
+public static function upload($imageBinary)
+{
+    // Название хранилища, в которое загружаем изображения.
+    $storageName = 'images';
+    $storageManager = \Yii::$app->storage;
+    $path = $storageManager->upload($storageName, $imageBinary, 'jpg');
+    $storageId = $storageManager->getStorageIdByName($storageName);
+    $model = new self;
+    $model->storage_id = $storageId;
+    $model->path = $path;
+    $model->save();
+    return $model;
+}
+```
+Далее, в той же модели, добавим метод получения ссылки на
+изображение:
+```php
+public function getUrl()
+{
+    $storageManager = \Yii::$app->storage;
+    $storageName = $storageManager->getStorageNameById($this->storage_id);
+    return $storageManager->getUrl($storageName, $this->path);
+}
+```
+После чего можно загружать изображения следующим образом:
+```php
+$image = app\models\Image::upload($imageBinary);
+```
+и выводить изображение в каком-либо представлении:
+```php
+<img src="<?= $image->url ?>">
+```
+\
+Пример реализации тех же методов с использованием
+объектов хранилищ:
+```php
+public static function upload($imageBinary)
+{
+    // Название хранилища, в которое загружаем изображения.
+    $storageName = 'images';
+    $storage = \Yii::$app->storage->$storageName;
+    $path = $storage->upload($imageBinary, 'jpg');
+    $model = new self;
+    $model->storage_id = $storage->id;
+    $model->path = $path;
+    $model->save();
+    return $model;
+}
+
+public function getUrl()
+{
+    $storage = \Yii::$app->storage->getStorageById($this->storage_id);
+    return $storage->getUrl($this->path);
+}
+```
+\
+Стоит заметить, что реализация метода `getUrl`
+не зависит от названия хранилища.
