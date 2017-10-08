@@ -51,7 +51,7 @@ class MigrateTool extends Object
      * Замыкание для фильтрации моделей, файлы которых перемещать не нужно.
      * @var null|Closure
      */
-    public $filterCallback = null;
+    public $filterCallback;
 
     /**
      * Название компонента управления хранилищами в рамках проекта.
