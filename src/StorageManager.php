@@ -32,13 +32,21 @@ class StorageManager extends Component
     /**
      * Сеттер списка хранилищ.
      * @param array $storageList
+     * @throws InvalidConfigException
      */
     public function setStorageList(array $storageList)
     {
-        $this->_storageList = $storageList;
-        foreach ($storageList as $id => $name) {
+        foreach ($storageList as $id => $configuration) {
+            $name = $configuration['name'];
+            if (!isset($name) || empty($name)) {
+                throw new InvalidConfigException('Необходимо указать название хранилища.');
+            }
+            if (isset($this->_nameToIdMap[$name])) {
+                throw new InvalidConfigException('Название хранилища должно быть уникальным.');
+            }
             $this->_nameToIdMap[$name] = $id;
         }
+        $this->_storageList = $storageList;
     }
 
     /**
@@ -53,9 +61,6 @@ class StorageManager extends Component
     {
         if (!isset($this->_storageObjects[$id])) {
             $configuration = $this->_storageList[$id];
-            if (!isset($this->name) || empty($this->name)) {
-                throw new InvalidConfigException('Необходимо указать название хранилища.');
-            }
             $driver = Yii::createObject($configuration);
             $driver->id = $id;
             $this->_storageObjects[$id] = $driver;
@@ -83,10 +88,34 @@ class StorageManager extends Component
      */
     public function getStorageByName($name)
     {
+        return $this->getStorageObjectById($this->getStorageIdByName($name));
+    }
+
+    /**
+     * Получение идентификатора хранилища по его названию.
+     * @param $name
+     * @return string
+     */
+    public function getStorageIdByName($name)
+    {
         if (!isset($this->_nameToIdMap[$name])) {
             throw new InvalidCallException("Хранилище '$name' не найдено.");
         }
-        return $this->getStorageObjectById($this->_nameToIdMap[$name]);
+        return $this->_nameToIdMap[$name];
+    }
+
+    /**
+     * Получение и
+     * @param $id
+     * @return string
+     */
+    public function getStorageNameById($id)
+    {
+        if (!isset($this->_storageList[$id])) {
+            throw new InvalidCallException("Хранилище '$id' не найдено.");
+        }
+        $storageConfiguration = $this->_storageList[$id];
+        return $storageConfiguration['name'];
     }
 
     /**
