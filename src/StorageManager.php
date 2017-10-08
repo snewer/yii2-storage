@@ -4,7 +4,6 @@ namespace snewer\storage;
 
 use Yii;
 use yii\base\Component;
-use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 
 class StorageManager extends Component
@@ -38,6 +37,9 @@ class StorageManager extends Component
     {
         foreach ($storageList as $id => $configuration) {
             $name = $configuration['name'];
+            if (!is_int($id)) {
+                throw new InvalidConfigException('Идентификатором хранилища должно быть число.');
+            }
             if (!isset($name) || empty($name)) {
                 throw new InvalidConfigException('Необходимо указать название хранилища.');
             }
@@ -72,11 +74,12 @@ class StorageManager extends Component
      * Получение объекта хранилища по его идентификатору.
      * @param int $id
      * @return AbstractStorage
+     * @throws InvalidConfigException
      */
     public function getStorageById($id)
     {
         if (!isset($this->_storageList[$id])) {
-            throw new InvalidCallException("Хранилище '$id' не найдено.");
+            throw new InvalidConfigException("Хранилище '$id' не найдено.");
         }
         return $this->getStorageObjectById($id);
     }
@@ -95,11 +98,12 @@ class StorageManager extends Component
      * Получение идентификатора хранилища по его названию.
      * @param $name
      * @return string
+     * @throws InvalidConfigException
      */
     public function getStorageIdByName($name)
     {
         if (!isset($this->_nameToIdMap[$name])) {
-            throw new InvalidCallException("Хранилище '$name' не найдено.");
+            throw new InvalidConfigException("Хранилище '$name' не найдено.");
         }
         return $this->_nameToIdMap[$name];
     }
@@ -108,11 +112,12 @@ class StorageManager extends Component
      * Получение и
      * @param $id
      * @return string
+     * @throws InvalidConfigException
      */
     public function getStorageNameById($id)
     {
         if (!isset($this->_storageList[$id])) {
-            throw new InvalidCallException("Хранилище '$id' не найдено.");
+            throw new InvalidConfigException("Хранилище '$id' не найдено.");
         }
         $storageConfiguration = $this->_storageList[$id];
         return $storageConfiguration['name'];
