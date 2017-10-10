@@ -61,6 +61,7 @@ class StorageManager extends Component
      */
     private function getStorageObjectById($id)
     {
+        $id = intval($id);
         if (!isset($this->_storageObjects[$id])) {
             $configuration = $this->_storageList[$id];
             $driver = Yii::createObject($configuration);
@@ -78,6 +79,7 @@ class StorageManager extends Component
      */
     public function getStorageById($id)
     {
+        $id = intval($id);
         if (!isset($this->_storageList[$id])) {
             throw new InvalidConfigException("Хранилище '$id' не найдено.");
         }
@@ -116,6 +118,7 @@ class StorageManager extends Component
      */
     public function getStorageNameById($id)
     {
+        $id = intval($id);
         if (!isset($this->_storageList[$id])) {
             throw new InvalidConfigException("Хранилище '$id' не найдено.");
         }
