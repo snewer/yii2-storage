@@ -51,4 +51,21 @@ abstract class AbstractStorage extends Object
      */
     abstract public function delete($path);
 
+    /**
+     * Равномерно и однозначно извлекает один из $baseUrls по переданному $path.
+     * @param array|string $baseUrls - массив
+     * @param string $path - путь к файлу в хранилище.
+     * @return string
+     */
+    protected function fetchBaseUrlByPath($baseUrls, $path)
+    {
+        if (is_array($baseUrls)) {
+            $keys = array_keys($baseUrls);
+            $keyIndex = abs(crc32($path)) % count($keys);
+            $key = $keys[$keyIndex];
+            return $baseUrls[$key];
+        }
+        return $baseUrls;
+    }
+
 }

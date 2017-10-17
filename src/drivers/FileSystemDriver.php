@@ -18,7 +18,10 @@ class FileSystemDriver extends AbstractStorage
 
     /**
      * URL до папки, в которую загружаются файлы.
-     * @var string
+     * Можно указать массив из нескольких вариантов,
+     * после этого каждому файлу будет равномерно присвоено
+     * одно из значений basePath.
+     * @var string|string[]
      */
     public $baseUrl;
 
@@ -45,8 +48,9 @@ class FileSystemDriver extends AbstractStorage
      */
     public function getUrl($path)
     {
-        if (isset($this->baseUrl)) {
-            return Url::to(Yii::getAlias(rtrim($this->baseUrl, '/')) . $path, true);
+        if (isset($this->baseUrl) || empty($this->baseUrl)) {
+            $baseUrl = $this->fetchBaseUrlByPath($this->baseUrl, $path);
+            return Url::to(Yii::getAlias(rtrim($baseUrl, '/')) . $path, true);
         } else {
             throw new InvalidConfigException('Необходимо указать свойство baseUrl.');
         }
