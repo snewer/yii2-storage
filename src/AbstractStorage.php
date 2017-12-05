@@ -4,6 +4,12 @@ namespace snewer\storage;
 
 use yii\base\Object;
 
+/**
+ * Class AbstractStorage
+ * @package snewer\storage
+ * @property $id - идентификатор хранилища
+ * @property $name - название хранилища
+ */
 abstract class AbstractStorage extends Object
 {
 
@@ -11,13 +17,13 @@ abstract class AbstractStorage extends Object
      * Идентификатор хранилища.
      * @var int
      */
-    public $id;
+    private $_id;
 
     /**
      * Название хранилища.
      * @var string
      */
-    public $name;
+    private $_name;
 
     /**
      * Записывает содержимое переменной $binary в файл хранилища с расширением $extension
@@ -66,6 +72,42 @@ abstract class AbstractStorage extends Object
             return $baseUrls[$key];
         }
         return $baseUrls;
+    }
+
+    /**
+     * Возвращает идентификатор хранилища.
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    /**
+     * Устанавливает идентификатор хранилища.
+     * @param $id
+     */
+    public function setId($id)
+    {
+        $this->_id = $id;
+    }
+
+    /**
+     * Возвращает название хранилища.
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Устанавливает название хранилища.
+     * @param $name
+     */
+    public function setName($name)
+    {
+        $this->_name = $name;
     }
 
 }
