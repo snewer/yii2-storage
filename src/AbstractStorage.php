@@ -7,17 +7,10 @@ use yii\base\Object;
 /**
  * Class AbstractStorage
  * @package snewer\storage
- * @property $id - идентификатор хранилища
- * @property $name - название хранилища
+ * @property $name - Название хранилища
  */
 abstract class AbstractStorage extends Object
 {
-
-    /**
-     * Идентификатор хранилища.
-     * @var int
-     */
-    private $_id;
 
     /**
      * Название хранилища.
@@ -72,24 +65,6 @@ abstract class AbstractStorage extends Object
             return $baseUrls[$key];
         }
         return $baseUrls;
-    }
-
-    /**
-     * Возвращает идентификатор хранилища.
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->_id;
-    }
-
-    /**
-     * Устанавливает идентификатор хранилища.
-     * @param $id
-     */
-    public function setId($id)
-    {
-        $this->_id = $id;
     }
 
     /**

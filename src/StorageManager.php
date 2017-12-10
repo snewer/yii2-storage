@@ -14,7 +14,7 @@ class StorageManager extends Component
      * Ключи массива являются идентификаторами хранилищ, а их значения — конфигурациями.
      * @var array
      */
-    private $_storageList = [];
+    private $_storageDefinitions = [];
 
     /**
      * Массив экземляров хранилищ.
@@ -23,107 +23,30 @@ class StorageManager extends Component
     private $_storageObjects = [];
 
     /**
-     * Массив вида "название хранилища" => "его идентификатор".
-     * @var array
-     */
-    private $_nameToIdMap = [];
-
-    /**
      * Сеттер списка хранилищ.
-     * @param array $storageList
+     * @param array $storageDefinitions
      * @throws InvalidConfigException
      */
-    public function setStorageList(array $storageList)
+    public function setList(array $storageDefinitions)
     {
-        foreach ($storageList as $id => $configuration) {
-            $name = $configuration['name'];
-            if (!is_int($id)) {
-                throw new InvalidConfigException('Идентификатором хранилища должно быть число.');
-            }
-            if (!isset($name) || empty($name)) {
-                throw new InvalidConfigException('Необходимо указать название хранилища.');
-            }
-            if (isset($this->_nameToIdMap[$name])) {
-                throw new InvalidConfigException('Название хранилища должно быть уникальным.');
-            }
-            $this->_nameToIdMap[$name] = $id;
-        }
-        $this->_storageList = $storageList;
+        $this->_storageDefinitions = $storageDefinitions;
     }
 
-    /**
-     * Получение объекта хранилища по его идентификатору.
-     * Существование хранилища на данном этапе не проверяется,
-     * его должны гарантировать методы, вызывающие данный метод.
-     * @param $id
-     * @return AbstractStorage
-     * @throws InvalidConfigException
-     */
-    private function getStorageObjectById($id)
-    {
-        $id = intval($id);
-        if (!isset($this->_storageObjects[$id])) {
-            $configuration = $this->_storageList[$id];
-            $driver = Yii::createObject($configuration);
-            $driver->id = $id;
-            $this->_storageObjects[$id] = $driver;
-        }
-        return $this->_storageObjects[$id];
-    }
-
-    /**
-     * Получение объекта хранилища по его идентификатору.
-     * @param int $id
-     * @return AbstractStorage
-     * @throws InvalidConfigException
-     */
-    public function getStorageById($id)
-    {
-        $id = intval($id);
-        if (!isset($this->_storageList[$id])) {
-            throw new InvalidConfigException("Хранилище '$id' не найдено.");
-        }
-        return $this->getStorageObjectById($id);
-    }
 
     /**
      * Получение объекта хранилища по его названию.
      * @param string $name
      * @return AbstractStorage
      */
-    public function getStorageByName($name)
+    public function getStorage($name)
     {
-        return $this->getStorageObjectById($this->getStorageIdByName($name));
-    }
-
-    /**
-     * Получение идентификатора хранилища по его названию.
-     * @param $name
-     * @return string
-     * @throws InvalidConfigException
-     */
-    public function getStorageIdByName($name)
-    {
-        if (!isset($this->_nameToIdMap[$name])) {
-            throw new InvalidConfigException("Хранилище '$name' не найдено.");
+        if (!isset($this->_storageObjects[$name])) {
+            $configuration = $this->_storageDefinitions[$name];
+            $configuration['name'] = $name;
+            $driver = Yii::createObject($configuration);
+            $this->_storageObjects[$name] = $driver;
         }
-        return $this->_nameToIdMap[$name];
-    }
-
-    /**
-     * Получение и
-     * @param $id
-     * @return string
-     * @throws InvalidConfigException
-     */
-    public function getStorageNameById($id)
-    {
-        $id = intval($id);
-        if (!isset($this->_storageList[$id])) {
-            throw new InvalidConfigException("Хранилище '$id' не найдено.");
-        }
-        $storageConfiguration = $this->_storageList[$id];
-        return $storageConfiguration['name'];
+        return $this->_storageObjects[$name];
     }
 
     /**
@@ -134,11 +57,7 @@ class StorageManager extends Component
      */
     public function __get($name)
     {
-        if (isset($this->_nameToIdMap[$name])) {
-            return $this->getStorageByName($name);
-        } else {
-            return parent::__get($name);
-        }
+        return $this->getStorage($name);
     }
 
     /**
@@ -150,7 +69,7 @@ class StorageManager extends Component
      */
     public function upload($storageName, $binary, $extension)
     {
-        return $this->getStorageByName($storageName)->upload($binary, $extension);
+        return $this->getStorage($storageName)->upload($binary, $extension);
     }
 
     /**
@@ -161,7 +80,7 @@ class StorageManager extends Component
      */
     public function getUrl($storageName, $path)
     {
-        return $this->getStorageByName($storageName)->getUrl($path);
+        return $this->getStorage($storageName)->getUrl($path);
     }
 
     /**
@@ -172,7 +91,7 @@ class StorageManager extends Component
      */
     public function getSource($storageName, $path)
     {
-        return $this->getStorageByName($storageName)->getSource($path);
+        return $this->getStorage($storageName)->getSource($path);
     }
 
     /**
@@ -183,7 +102,7 @@ class StorageManager extends Component
      */
     public function delete($storageName, $path)
     {
-        return $this->getStorageByName($storageName)->delete($path);
+        return $this->getStorage($storageName)->delete($path);
     }
 
 }

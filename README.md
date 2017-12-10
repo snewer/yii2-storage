@@ -15,15 +15,11 @@ php composer.phar require snewer/yii2-storage
 ---------
 Задача компонента — предоставление интерфейса для реализации хранилищ и их использование.
 
-Компонент имеет только одно свойство `storageList`, в котором
+Компонент имеет только одно свойство `list`, в котором
 необходимо указать массив конфигураций хранилищ.
 
-**Важно!** Ключами массива должны быть целые,
-неотрицательные числа *(unsigned integer)*.
-
-Данные ключи используются для хранения информации
-о хранилище в численном виде *(например, в базах данных)*.
-**Рекомендуем** указывать их явно.
+**Важно!** Ключами массива являются названия хранилищ, по которым
+в дальнейшем получается экземпляр хранилища.
 
 Пример подключения компонента в проект:
 ```php
@@ -33,7 +29,7 @@ php composer.phar require snewer/yii2-storage
         //...
         'storage' => [
             'class' => 'snewer\storage\StorageManager',
-            'storageList' => []
+            'list' => []
         ],
         //...
     ],
@@ -72,13 +68,6 @@ snewer\storage\drivers\FileSystemDriver
             <th>Обятательное</th>
             <th>Значение по-умолчанию</th>
             <th>Описание</th>
-        </tr>
-        <tr valign="top">
-            <td>name</td>
-            <td>string</td>
-            <td>Да</td>
-            <td>Нет</td>
-            <td>Уникальное название хранилища.</td>
         </tr>
         <tr valign="top">
             <td>basePath</td>
@@ -120,17 +109,15 @@ snewer\storage\drivers\FileSystemDriver
         //...
         'storage' => [
             'class' => 'snewer\storage\StorageManager',
-            'storageList' => [
-                1 => [
+            'list' => [
+                'images' => [
                     'class' => 'snewer\storage\drivers\FileSystemDriver',
-                    'name' => 'images',
                     'basePath' => '@frontend/web/uploads/images/',
                     'baseUrl' => '@web/uploads/images/',
                     'depth' => 4
                 ],
-                2 => [
+                'documents' => [
                     'class' => 'snewer\storage\drivers\FileSystemDriver',
-                    'name' => 'documents',
                     'basePath' => '@frontend/web/uploads/documents/',
                     'baseUrl' => '@web/uploads/documents/',
                     'depth' => 4
@@ -156,13 +143,8 @@ snewer\storage\drivers\FileSystemDriver
 ```php
 public static function upload($imageBinary)
 {
-    // Название хранилища, в которое загружаем изображения.
-    $storageName = 'images';
-    $storageManager = \Yii::$app->storage;
-    $path = $storageManager->upload($storageName, $imageBinary, 'jpg');
-    $storageId = $storageManager->getStorageIdByName($storageName);
+    $path =  Yii::$app->storage->upload('images', $imageBinary, 'jpg');
     $model = new self;
-    $model->storage_id = $storageId;
     $model->path = $path;
     $model->save();
     return $model;
@@ -173,9 +155,7 @@ public static function upload($imageBinary)
 ```php
 public function getUrl()
 {
-    $storageManager = \Yii::$app->storage;
-    $storageName = $storageManager->getStorageNameById($this->storage_id);
-    return $storageManager->getUrl($storageName, $this->path);
+    return Yii::$app->storage->getUrl('images', $this->path);
 }
 ```
 После чего можно загружать изображения следующим образом:
@@ -192,12 +172,8 @@ $image = app\models\Image::upload($imageBinary);
 ```php
 public static function upload($imageBinary)
 {
-    // Название хранилища, в которое загружаем изображения.
-    $storageName = 'images';
-    $storage = \Yii::$app->storage->$storageName;
-    $path = $storage->upload($imageBinary, 'jpg');
+    $path = Yii::$app->storage->images->upload($imageBinary, 'jpg');
     $model = new self;
-    $model->storage_id = $storage->id;
     $model->path = $path;
     $model->save();
     return $model;
@@ -205,8 +181,7 @@ public static function upload($imageBinary)
 
 public function getUrl()
 {
-    $storage = \Yii::$app->storage->getStorageById($this->storage_id);
-    return $storage->getUrl($this->path);
+    return Yii::$app->storage->images->getUrl($this->path);
 }
 ```
 \
