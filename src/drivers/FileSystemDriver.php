@@ -48,7 +48,7 @@ class FileSystemDriver extends AbstractStorage
      */
     public function getUrl($path)
     {
-        if (isset($this->baseUrl) || empty($this->baseUrl)) {
+        if (isset($this->baseUrl)) {
             $baseUrl = $this->fetchBaseUrlByPath($this->baseUrl, $path);
             return Url::to(Yii::getAlias(rtrim($baseUrl, '/')) . $path, true);
         } else {
