@@ -32,6 +32,12 @@ class FileSystemDriver extends AbstractStorage
     public $depth = 3;
 
     /**
+     * Длина названия дирректорий, которые создаются при загрузке файла.
+     * @var int
+     */
+    public $dirNameLength = 2;
+
+    /**
      * @inheritdoc
      * @throws InvalidConfigException
      */
@@ -78,10 +84,7 @@ class FileSystemDriver extends AbstractStorage
             // используем древовидную структуру директорий,
             // что бы в одной директории не накапливалось большое кол-во файлов
             for ($i = 0; $i < $this->depth; $i++) {
-                $path .= '/' . substr(md5(microtime()), 0, 2);
-                // AdBlocker блокирует пути, в которых встречаются некоторые ключевые слова, такие как "ad", "adv"
-                // поэтому убираем их из пути.
-                $path = str_replace('ad', 'ww', $path);
+                $path .= '/' . $this->generateRandomString($this->dirNameLength, true);
                 if (!is_dir($basePath . $path)) {
                     mkdir($basePath . $path);
                 }

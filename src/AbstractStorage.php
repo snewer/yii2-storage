@@ -68,6 +68,32 @@ abstract class AbstractStorage extends Object
     }
 
     /**
+     * Генерирует строку из случайных символов [a-z0-9] при $multiCase = false
+     * и из символов [a-zA-Z0-9] при $multiCase = true длиной $length символов.
+     * @param $length - длина необходимой случайной строки.
+     * @param bool $multiCase - нужно-ли использовать символы в разном регистре.
+     * @return string
+     */
+    protected function generateRandomString($length, $multiCase = true)
+    {
+        $resultString = '';
+        for ($i = 0; $i < $length; ++$i) {
+            $randomChar = base_convert(rand(0, 35), 10, 36);
+            if ($multiCase) {
+                $uppercase = rand(0, 1) == 1;
+                if ($uppercase) {
+                    $randomChar = strtoupper($randomChar);
+                }
+            }
+            $resultString .= $randomChar;
+        }
+        // AdBlocker блокирует пути, в которых встречаются некоторые ключевые слова,
+        // такие как "ad", "adv" поэтому переименовываем их.
+        $resultString = preg_replace('/^ad/i', 'ww', $resultString);
+        return $resultString;
+    }
+
+    /**
      * Возвращает название хранилища.
      * @return string
      */
