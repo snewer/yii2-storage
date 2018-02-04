@@ -68,6 +68,31 @@ abstract class AbstractBucket extends Object
     }
 
     /**
+     * Генерирует случайную строку для именования директорий.
+     * Выходная строка удовлетворяет регулярному выражению [0-9A-Za-z]+.
+     * @param int $length - Длина генерируемой строки.
+     * @param bool $toLower - Нужно ли, что бы выходная строка была в нижнем регистре.
+     * @return mixed|string
+     */
+    protected function generateRandomString($length = 2, $toLower = true)
+    {
+        if ($toLower) {
+            $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+        } else {
+            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        }
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        // AdBlocker блокирует пути, в которых встречаются некоторые ключевые слова, такие как "ad", "adv"
+        // поэтому убираем их из пути.
+        $randomString = str_ireplace('ad', '00', $randomString);
+        return $randomString;
+    }
+
+    /**
      * Возвращает название хранилища.
      * @return string
      */
