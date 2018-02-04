@@ -15,7 +15,7 @@ php composer.phar require snewer/yii2-storage
 ---------
 Задача компонента — предоставление интерфейса для реализации хранилищ и их использование.
 
-Компонент имеет только одно свойство `list`, в котором
+Компонент имеет только одно свойство `buckets`, в котором
 необходимо указать массив конфигураций хранилищ.
 
 **Важно!** Ключами массива являются названия хранилищ, по которым
@@ -29,7 +29,7 @@ php composer.phar require snewer/yii2-storage
         //...
         'storage' => [
             'class' => 'snewer\storage\StorageManager',
-            'list' => []
+            'buckets' => []
         ],
         //...
     ],
@@ -38,7 +38,7 @@ php composer.phar require snewer/yii2-storage
 ```
 \
 Под хранилищем понимается реализация интерфейса
-абстрактного класса `snewer\storage\AbstractStorage` позволяющая:
+абстрактного класса `snewer\storage\AbstractBucket` позволяющая:
 
 - загрузить файл
 - получить содержимое файла
@@ -51,7 +51,7 @@ php composer.phar require snewer/yii2-storage
 Таким образом, для реализации хранилища необходимо
 унаследоваться от абстрактного класса
 ```php
-snewer\storage\AbstractStorage
+snewer\storage\AbstractBucket
 ```
 
 \
@@ -109,7 +109,7 @@ snewer\storage\drivers\FileSystemDriver
         //...
         'storage' => [
             'class' => 'snewer\storage\StorageManager',
-            'list' => [
+            'buckets' => [
                 'images' => [
                     'class' => 'snewer\storage\drivers\FileSystemDriver',
                     'basePath' => '@frontend/web/uploads/images/',

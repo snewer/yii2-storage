@@ -4,7 +4,6 @@ namespace snewer\storage;
 
 use Yii;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
 
 class StorageManager extends Component
 {
@@ -14,95 +13,95 @@ class StorageManager extends Component
      * Ключи массива являются идентификаторами хранилищ, а их значения — конфигурациями.
      * @var array
      */
-    private $_storageDefinitions = [];
+    private $_bucketsDefinitions = [];
 
     /**
-     * Массив экземляров хранилищ.
-     * @var AbstractStorage[]
+     * Массив доступных хранилищ.
+     * Ключи массива являются идентификаторами хранилищ, а их значения — объектами.
+     * @var AbstractBucket[]
      */
-    private $_storageObjects = [];
+    private $_bucketsObjects = [];
 
     /**
      * Сеттер списка хранилищ.
-     * @param array $storageDefinitions
-     * @throws InvalidConfigException
+     * @param array $bucketsDefinitions
      */
-    public function setList(array $storageDefinitions)
+    public function setBuckets(array $bucketsDefinitions)
     {
-        $this->_storageDefinitions = $storageDefinitions;
+        $this->_bucketsDefinitions = $bucketsDefinitions;
     }
 
 
     /**
      * Получение объекта хранилища по его названию.
      * @param string $name
-     * @return AbstractStorage
+     * @return AbstractBucket
      */
-    public function getStorage($name)
+    public function getBucket($name)
     {
-        if (!isset($this->_storageObjects[$name])) {
-            $configuration = $this->_storageDefinitions[$name];
+        if (!isset($this->_bucketsObjects[$name])) {
+            $configuration = $this->_bucketsDefinitions[$name];
             $configuration['name'] = $name;
             $driver = Yii::createObject($configuration);
-            $this->_storageObjects[$name] = $driver;
+            $this->_bucketsObjects[$name] = $driver;
         }
-        return $this->_storageObjects[$name];
+        return $this->_bucketsObjects[$name];
     }
 
     /**
      * Геттер для получения объекта хранилища по его названию через
      * магическое свойство компонента.
      * @param string $name
-     * @return mixed|AbstractStorage
+     * @return mixed|AbstractBucket
      */
     public function __get($name)
     {
-        return $this->getStorage($name);
+        return $this->getBucket($name);
     }
 
     /**
      * Загрузка файла в хранилище по его названию.
-     * @param $storageName
-     * @param $binary
-     * @param $extension
+     * @param string $bucketName
+     * @param string $binary
+     * @param string $extension
      * @return bool|string - путь до файла относительно хранилища.
      */
-    public function upload($storageName, $binary, $extension)
+    public function upload($bucketName, $binary, $extension)
     {
-        return $this->getStorage($storageName)->upload($binary, $extension);
+        return $this->getBucket($bucketName)->upload($binary, $extension);
     }
 
     /**
      * Получение URL файла по названию хранилища и относительного пути в нем.
-     * @param $storageName
-     * @param $path
+     * @param string $bucketName
+     * @param string $path
      * @return string
      */
-    public function getUrl($storageName, $path)
+    public function getUrl($bucketName, $path)
     {
-        return $this->getStorage($storageName)->getUrl($path);
+        return $this->getBucket($bucketName)->getUrl($path);
     }
 
     /**
      * Получение содержимого файла по названию хранилища и относительного пути в нем.
-     * @param $storageName
-     * @param $path
+     * @param string $bucketName
+     * @param string $path
      * @return string
      */
-    public function getSource($storageName, $path)
+    public function getSource($bucketName, $path)
     {
-        return $this->getStorage($storageName)->getSource($path);
+        return $this->getBucket($bucketName)->getSource($path);
     }
 
     /**
      * Удаление файла по названию хранилища и относительного пути в нем.
-     * @param $storageName
-     * @param $path
+     * @param string $bucketName
+     * @param string $path
      * @return bool
      */
-    public function delete($storageName, $path)
+    public function delete($bucketName, $path)
     {
-        return $this->getStorage($storageName)->delete($path);
+        return $this->getBucket($bucketName)->delete($path);
     }
 
 }

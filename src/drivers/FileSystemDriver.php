@@ -5,9 +5,9 @@ namespace snewer\storage\drivers;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Url;
-use snewer\storage\AbstractStorage;
+use snewer\storage\AbstractBucket;
 
-class FileSystemDriver extends AbstractStorage
+class FileSystemDriver extends AbstractBucket
 {
 
     /**
