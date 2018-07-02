@@ -99,8 +99,8 @@ class FileSystemDriver extends AbstractBucket
      */
     public function delete($path)
     {
-        $filePath = Yii::getAlias(rtrim($this->baseUrl, '/')) . $path;
-        return unlink($filePath);
+        $filePath = Yii::getAlias(rtrim($this->basePath, '/')) . $path;
+        return @unlink($filePath);
     }
 
 }
