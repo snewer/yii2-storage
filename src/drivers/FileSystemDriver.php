@@ -46,6 +46,8 @@ class FileSystemDriver extends AbstractBucket
         if (!isset($this->basePath)) {
             throw new InvalidConfigException('Необходимо указать свойство basePath.');
         }
+        $this->basePath = Yii::getAlias($this->basePath);
+        $this->basePath = rtrim($this->basePath, '/');
     }
 
     /**
@@ -77,21 +79,27 @@ class FileSystemDriver extends AbstractBucket
      */
     public function upload($source, $extension)
     {
-        $basePath = Yii::getAlias($this->basePath);
-        $basePath = rtrim($basePath, '/');
         do {
             $path = '';
             // используем древовидную структуру директорий,
             // что бы в одной директории не накапливалось большое кол-во файлов
             for ($i = 0; $i < $this->depth; $i++) {
                 $path .= '/' . $this->generateRandomString($this->dirNameLength, true);
-                if (!is_dir($basePath . $path)) {
-                    mkdir($basePath . $path);
+                if (!is_dir($this->basePath . $path)) {
+                    mkdir($this->basePath . $path);
                 }
             }
             $path .= '/' . uniqid() . '.' . strtolower($extension);
-        } while (is_file($basePath . $path));
-        return file_put_contents($basePath . $path, $source) ? $path : false;
+        } while (is_file($this->basePath . $path));
+        return file_put_contents($this->basePath . $path, $source) ? $path : false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function append($path, $source)
+    {
+        return file_put_contents($this->basePath . $path, $source, FILE_APPEND);
     }
 
     /**

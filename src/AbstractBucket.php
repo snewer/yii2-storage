@@ -2,14 +2,14 @@
 
 namespace snewer\storage;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Class AbstractStorage
  * @package snewer\storage
  * @property $name - Название хранилища
  */
-abstract class AbstractBucket extends Object
+abstract class AbstractBucket extends BaseObject
 {
 
     /**
@@ -26,6 +26,15 @@ abstract class AbstractBucket extends Object
      * @return string|boolean - возвращает путь к файлу относительно хранилища
      */
     abstract public function upload($binary, $extension);
+
+    /**
+     * Дописывает содержимое $binary в конец файла $path.
+     *
+     * @param $path
+     * @param $binary
+     * @return boolean
+     */
+    abstract public function append($path, $binary);
 
     /**
      * Возвращает веб-доступный путь к файлу хранилища
