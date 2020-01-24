@@ -82,9 +82,9 @@ class FileSystemDriver extends AbstractBucket
         do {
             $path = '';
             // используем древовидную структуру директорий,
-            // что бы в одной директории не накапливалось большое кол-во файлов
+            // что бы в одной директории не накапливалось большое кол-во файлов.
             for ($i = 0; $i < $this->depth; $i++) {
-                $path .= '/' . $this->generateRandomString($this->dirNameLength, true);
+                $path .= '/' . rand(10 ** ($this->dirNameLength - 1), 10 ** $this->dirNameLength - 1);
                 if (!is_dir($this->basePath . $path)) {
                     mkdir($this->basePath . $path);
                 }

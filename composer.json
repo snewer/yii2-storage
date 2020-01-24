@@ -16,5 +16,8 @@
         "psr-4": {
             "snewer\\storage\\": "src/"
         }
+    },
+    "extra": {
+        "bootstrap": "snewer\\images\\Bootstrap"
     }
 }

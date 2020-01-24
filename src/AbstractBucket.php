@@ -11,7 +11,6 @@ use yii\base\BaseObject;
  */
 abstract class AbstractBucket extends BaseObject
 {
-
     /**
      * Название хранилища.
      * @var string
@@ -75,55 +74,7 @@ abstract class AbstractBucket extends BaseObject
         }
         return $baseUrls;
     }
-
-    /**
-     * @see https://gist.github.com/snewer/013bc268828454cc784c857eb695c434
-     * @param null $length
-     * @return array
-     */
-    private function getStopWords($length = null)
-    {
-        $stopWords = file_get_contents(__DIR__ . '/stopWords.txt');
-        $stopWords = explode(PHP_EOL, $stopWords);
-        if ($length) {
-            return array_filter($stopWords, function ($value) use ($length) {
-                return strlen($value) == $length;
-            });
-        } else {
-            return $stopWords;
-        }
-    }
-
-    /**
-     * Генерирует случайную строку для именования директорий.
-     * Выходная строка удовлетворяет регулярному выражению [0-9A-Za-z]+.
-     * @param int $length - Длина генерируемой строки.
-     * @param bool $toLower - Нужно ли, что бы выходная строка была в нижнем регистре.
-     * @return mixed|string
-     */
-    protected function generateRandomString($length = 2, $toLower = true)
-    {
-        if ($toLower) {
-            $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
-        } else {
-            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        }
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        // AdBlocker блокирует пути, в которых встречаются некоторые ключевые слова,
-        // такие как "ad", "bn" поэтому убираем их из пути.
-        $stopWords = $this->getStopWords($length);
-        foreach ($stopWords as $stopWord) {
-            if (strcasecmp($randomString, $stopWord) === 0) {
-                return str_repeat('s', $length);
-            }
-        }
-        return $randomString;
-    }
-
+    
     /**
      * Возвращает название хранилища.
      * @return string
@@ -141,5 +92,4 @@ abstract class AbstractBucket extends BaseObject
     {
         $this->_name = $name;
     }
-
 }
