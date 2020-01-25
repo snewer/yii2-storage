@@ -59,6 +59,15 @@ abstract class AbstractBucket extends BaseObject
     abstract public function delete($path);
 
     /**
+     * Замена содержимого файла.
+     *
+     * @param $path
+     * @param $binary
+     * @return boolean
+     */
+    abstract public function replace($path, $binary);
+
+    /**
      * Равномерно и однозначно извлекает один из $baseUrls по переданному $path.
      * @param array|string $baseUrls - массив
      * @param string $path - путь к файлу в хранилище.

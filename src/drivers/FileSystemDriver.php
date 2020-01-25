@@ -111,4 +111,11 @@ class FileSystemDriver extends AbstractBucket
         return @unlink($filePath);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function replace($path, $binary)
+    {
+        return file_put_contents($this->basePath . $path, $binary);
+    }
 }
